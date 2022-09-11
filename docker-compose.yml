@@ -21,3 +21,13 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  front:
+    container_name: front
+    build: ./library_front
+    volumes:
+      - './library_front:/app'
+      - '/library_front/app/node_modules'
+    ports:
+      - 3000:3000
+    stdin_open: true
+    command: npm start
