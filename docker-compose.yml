@@ -31,3 +31,12 @@ services:
       - 3000:3000
     stdin_open: true
     command: npm start
+  nginx:
+        image: nginx
+        ports:
+            - 80:80
+        volumes:
+            - "./nginx.config/:/etc/nginx/nginx.conf"
+        depends_on:
+            - back
+            - front
