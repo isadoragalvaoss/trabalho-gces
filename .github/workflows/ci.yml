@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build & Up app
+        run: docker-compose up --build -d
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Connect to Postgres
+        run: docker run --name postgres -e POSTGRES_PASSWORD=password -d -p 5432:5432 postgres
+
+      - name: Run tests
+        run: export PGPASSWORD=password; psql -h 0.0.0.0 -U postgres
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run lint backend
+        run: cd library_back/ && pylint ./manage.py
