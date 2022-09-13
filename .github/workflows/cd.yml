@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: docker login
+      env:
+        DOCKER_USERNAME: ${{secrets.DOCKER_HUB_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_HUB_PASSWORD}}
+      run: |
+        docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD 
+    - name: Build the Docker Back image
+      run: docker build ./library_back --file ./library_back/Dockerfile --tag isadoragalvaoss/trabalho-gces:latest
+
+    - name: Build the Docker Front image
+      run: docker build ./library_front --file ./library_front/Dockerfile --tag isadoragalvaoss/trabalho-gces:latest
+      
+    - name: Docker Push
+      run: docker push isadoragalvaoss/trabalho-gces
